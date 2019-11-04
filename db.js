@@ -1,11 +1,17 @@
-const MongoClient = require('mongodb').MongoClient;
+// const MongoClient = require("mongodb").MongoClient;
+// const mongoose = require("mongoose");
 
-const url = 'mongodb://localhost:27017/mydb';
+// mongoose.connect(
+//   `mongodb+srv://root:${process.env.MONGO_PASSWORD}@cluster0-u4u29.mongodb.net/test?retryWrites=true&w=majority`,
+//   { useMongoClient: true }
+// );
 
-export const db_connect = () => {
-    MongoClient.connect(url, (err, db) => {
-        if (err) throw err;
-        console.log('Database created!');
-        db.close();
-    });
-};
+// const client = new MongoClient(uri, { useNewUrlParser: true });
+// module.exports = {
+//   db_connect: () =>
+//     client.connect(err => {
+//       const collection = client.db("test").collection("devices");
+//       // perform actions on the collection object
+//       client.close();
+//     })
+// };
