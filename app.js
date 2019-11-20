@@ -4,7 +4,7 @@ const cors = require("cors");
 const morgan = require("morgan");
 const mongoose = require("mongoose");
 
-const loginRoutes = require("./api/routes/login");
+const authRoutes = require("./api/routes/auth");
 
 const app = express();
 app.use(cors());
@@ -13,8 +13,8 @@ app.use(morgan("dev"));
 
 mongoose
   .connect(
-    `mongodb+srv://root:${process.env.MONGO_PASSWORD}@cluster0-u4u29.mongodb.net/test?retryWrites=true&w=majority`,
-    { useNewUrlParser: true, useUnifiedTopology: true }
+    `mongodb+srv://root:${process.env.MONGO_PASSWORD}@cluster0-u4u29.mongodb.net/Main?retryWrites=true&w=majority`,
+    { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true }
   )
   .then(res => {
     if (res) {
@@ -36,7 +36,7 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use("/login", loginRoutes);
+app.use("/auth", authRoutes);
 
 app.use((req, res, next) => {
   const error = new Error("Not found");
