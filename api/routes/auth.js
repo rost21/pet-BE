@@ -17,7 +17,7 @@ router.get("/", async (req, res, next) => {
   }
 });
 
-router.get("/:username", async (req, res, next) => {
+router.post("/login/:username", async (req, res, next) => {
   const username = req.params.username;
   const { login, email, password } = req.body;
   console.log(req.body);
@@ -36,12 +36,12 @@ router.get("/:username", async (req, res, next) => {
         });
       } else {
         res.status(404).json({
-          message: "Failed loggin!"
+          error: "Failed login!"
         });
       }
     } else {
       res.status(404).json({
-        message: "No found user with id: " + username
+        error: "No found user with username!"
       });
     }
   } catch (e) {
