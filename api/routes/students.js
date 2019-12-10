@@ -5,8 +5,7 @@ const jwt = require("express-jwt");
 
 const Student = require("../models/student");
 
-router.post('/', async (req, res) => {
-  console.log(req.body)
+router.post("/", async (req, res) => {
   const student = new Student({
     id: new mongoose.Types.ObjectId(),
     firstName: req.body.firstName,
@@ -26,7 +25,7 @@ router.post('/', async (req, res) => {
   } catch (e) {
     console.log(e);
     res.status(500).json({
-      error: e,
+      error: e
     });
   }
 });
@@ -46,16 +45,20 @@ router.get("/", async (req, res) => {
 router.get("/dublicates", async (req, res) => {
   try {
     const result = await Student.aggregate([
-      { $group: {
-        _id: { firstName: "$firstName" },   // replace `name` here twice
-        dublicates: { $addToSet: "$$ROOT" },
-        count: { $sum: 1 } 
-      } }, 
-      { $match: { 
-        count: { $gte: 2 } 
-      } },
-      { $sort : { count : -1} },
-      { $limit : 10 }
+      {
+        $group: {
+          _id: { firstName: "$firstName" },
+          dublicates: { $addToSet: "$$ROOT" },
+          count: { $sum: 1 }
+        }
+      },
+      {
+        $match: {
+          count: { $gte: 2 }
+        }
+      },
+      { $sort: { count: -1 } },
+      { $limit: 10 }
     ]);
     res.status(200).json(result);
   } catch (e) {
@@ -67,9 +70,21 @@ router.get("/dublicates", async (req, res) => {
 });
 
 router.delete("/delete", async (req, res) => {
-  const ids = req.body.ids
-  console.log(ids)
-  res.sendStatus(200)
+  const ids = req.body.ids;
+  try {
+    await Student.updateMany(
+      { _id: { $in: ids } },
+      { $set: { deleted: true } },
+      { strict: false }
+    );
+
+    res.sendStatus(200);
+  } catch (e) {
+    console.log(e);
+    res.status(500).json({
+      error: e
+    });
+  }
 });
 
 module.exports = router;
