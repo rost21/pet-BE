@@ -5,6 +5,7 @@ const morgan = require("morgan");
 const mongoose = require("mongoose");
 
 const authRoutes = require("./api/routes/auth");
+const studentsRoutes = require("./api/routes/students");
 
 const app = express();
 app.use(cors());
@@ -37,6 +38,7 @@ app.use((req, res, next) => {
 });
 
 app.use("/auth", authRoutes);
+app.use("/students", studentsRoutes);
 
 app.use((req, res, next) => {
   const error = new Error("Not found");
