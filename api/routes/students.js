@@ -1,11 +1,12 @@
 const express = require("express");
 const router = express.Router();
 const mongoose = require("mongoose");
-const jwt = require("express-jwt");
+const logger = require("../../logger")
 
 const Student = require("../models/student");
 
 router.post("/", async (req, res) => {
+  logger.trace(req.body)
   const student = new Student({
     id: new mongoose.Types.ObjectId(),
     firstName: req.body.firstName,
@@ -17,13 +18,13 @@ router.post("/", async (req, res) => {
   });
   try {
     const result = await student.save();
-    console.log("Added student: ", result);
+    logger.debug("Added student: ", result);
     res.status(201).json({
       addedStudent: student,
       isUserCreated: true
     });
   } catch (e) {
-    console.log(e);
+    logger.error(e);
     res.status(500).json({
       error: e
     });
@@ -33,9 +34,10 @@ router.post("/", async (req, res) => {
 router.get("/", async (req, res) => {
   try {
     const docs = await Student.find();
+    logger.debug(docs)
     res.status(200).json(docs);
   } catch (e) {
-    console.log(e);
+    logger.error(e);
     res.status(500).json({
       error: e
     });
@@ -60,9 +62,10 @@ router.get("/dublicates", async (req, res) => {
       { $sort: { count: -1 } },
       { $limit: 10 }
     ]);
+    logger.debug(result)
     res.status(200).json(result);
   } catch (e) {
-    console.log(e);
+    logger.error(e);
     res.status(500).json({
       error: e
     });
@@ -70,6 +73,7 @@ router.get("/dublicates", async (req, res) => {
 });
 
 router.delete("/delete", async (req, res) => {
+  logger.trace(req.body)
   const ids = req.body.ids;
   try {
     await Student.updateMany(
@@ -80,7 +84,7 @@ router.delete("/delete", async (req, res) => {
 
     res.sendStatus(200);
   } catch (e) {
-    console.log(e);
+    logger.error(e);
     res.status(500).json({
       error: e
     });

@@ -6,6 +6,7 @@ const mongoose = require("mongoose");
 
 const authRoutes = require("./api/routes/auth");
 const studentsRoutes = require("./api/routes/students");
+const logger = require("./logger");
 
 const app = express();
 app.use(cors());
@@ -19,10 +20,10 @@ mongoose
   )
   .then(res => {
     if (res) {
-      console.log("Connection with DB was succesfully");
+      logger.info("Connection with DB was succesfully")
     }
   })
-  .catch(e => console.log(e));
+  .catch(e => logger.error(e));
 
 app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", "*");
