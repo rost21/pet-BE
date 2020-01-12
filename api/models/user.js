@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const uniqueValidator = require("mongoose-unique-validator");
 
-const UsersSchema = mongoose.Schema({
+const userSchema = mongoose.Schema({
   id: mongoose.Schema.Types.ObjectId,
   username: { type: String, required: true, unique: true },
   email: {
@@ -12,11 +12,11 @@ const UsersSchema = mongoose.Schema({
   },
   password: { type: String, required: true },
   firstName: String,
-  lastName: String
+  lastName: String,
 });
 
-UsersSchema.plugin(uniqueValidator, {
+userSchema.plugin(uniqueValidator, {
   message: "Error, user with this {PATH} already exists"
 });
 
-module.exports = mongoose.model("Users", UsersSchema);
+module.exports = mongoose.model("User", userSchema);
