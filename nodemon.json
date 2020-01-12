@@ -1,5 +1,6 @@
 {
   "env": {
-    "MONGO_PASSWORD": "root"
+    "MONGO_PASSWORD": "root",
+    "JWT_KEY": "secretkey"
   }
 }
