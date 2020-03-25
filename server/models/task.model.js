@@ -10,8 +10,15 @@ const taskSchema = Schema({
   title: { type: String, required: true },
   description: { type: String, required: true },
   type: { type: String, enum: ['bug', 'story', 'improvment'] },
-  reporter: { type: Schema.Types.ObjectId, ref: 'User', required: true },
-  assignTo: { type: Schema.Types.ObjectId, ref: 'User' },
+  reporter: {
+    type: Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
+  },
+  assignTo: {
+    type: Schema.Types.ObjectId,
+    ref: 'User'
+  },
   status: String,
 });
 

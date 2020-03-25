@@ -1,5 +1,6 @@
-const mapUsers = (users) => 
-  users.map(user => ({
+const mapUser = user => {
+  if (!user) return null;
+  return {
     id: user._id,
     firstname: user.firstname,
     lastname: user.lastname,
@@ -11,7 +12,10 @@ const mapUsers = (users) =>
     role: user.role,
     isCustomer: user.isCustomer,
     skills: user.skills,
-    rankings: user.rankings,
-  }));
+    rankings: user.rankings
+  };
+};
 
-module.exports = mapUsers;
+const mapUsers = users => users.map(user => mapUser(user));
+
+module.exports = { mapUsers, mapUser };

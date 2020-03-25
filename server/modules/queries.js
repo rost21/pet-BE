@@ -1,62 +1,41 @@
 const User = require('../models/user.model');
 const Project = require('../models/project.model');
+const Task = require('../models/task.model');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const mapUsers = require('../helpers/user');
-const mapProjects = require('../helpers/project');
+const { mapUsers } = require('../helpers/user');
+const { mapProjects, mapProject } = require('../helpers/project');
+const { mapTasks, mapTask } = require('../helpers/task');
 
 const queries = {
   users: async () => {
     try {
-      const users = await User.find({});
-      const res = mapUsers(users);
-      return res;
+      const users = await User.find({}).lean();
+      return mapUsers(users);
     } catch (e) {
-      console.log('errors: ', e)
+      console.error('errors: ', e);
       return Promise.reject(new Error(e));
     }
   },
-  login: async (parent, variables) => {
-    console.log('variables: ', variables);
-    const { username, password } = variables;
+  login: async (parent, { data }) => {
+    console.log('variables: ', JSON.parse(JSON.stringify(data)));
+    const { username, password } = data;
     try {
-      const user = await User.findOne({ username: username });
+      const user = await User.findOne({ username }).lean();
       if (!user) {
         return { isLoggedIn: false };
       }
       const result = await bcrypt.compare(password, user.password);
       if (result) {
-        const {
-          _id,
-          firstname,
-          lastname,
-          username,
-          email,
-          password,
-          phone,
-          dateOfBirth,
-          role,
-          isCustomer,
-          skills,
-          rankings
-        } = user;
+        const { _id, username, email } = user;
         const token = jwt.sign(
           {
             id: user._id,
-            firstname,
-            lastname,
             username,
-            email,
-            password,
-            phone,
-            dateOfBirth,
-            role,
-            isCustomer,
-            skills,
-            rankings
+            email
           },
           process.env.JWT_KEY,
-          { expiresIn: '6h' }
+          { expiresIn: '1d' }
         );
         return {
           isLoggedIn: true,
@@ -68,12 +47,12 @@ const queries = {
       }
       return { isLoggedIn: false };
     } catch (e) {
-      console.log('error:', e);
-      return { isLoggedIn: false };
+      console.error('error:', e);
+      return Promise.reject(new Error(e));
     }
   },
   getUser: (parent, variables) => {
-    console.log('variables: ', variables);
+    console.log('variables: ', JSON.parse(JSON.stringify(variables)));
     const { token } = variables;
     try {
       const decoded = jwt.verify(token, process.env.JWT_KEY);
@@ -83,17 +62,99 @@ const queries = {
         return null;
       }
     } catch (e) {
-      console.log('errors: ', e);
+      console.error('errors: ', e);
       return Promise.reject(new Error(e));
     }
   },
   projects: async () => {
     try {
-      const projects = await Project.find({}).populate('owner');
-      const res = mapProjects(projects);
-      return res;
+      const projects = await Project.find({})
+        .lean()
+        .populate({
+          path: 'owner',
+          model: 'User',
+        })
+        .populate({
+          path: 'members',
+          model: 'User',
+        })
+        .populate({
+          path: 'tasks',
+          model: 'Task',
+          populate: [
+            {
+              path: 'reporter',
+              model: 'User',
+            },
+            {
+              path: 'assignTo',
+              model: 'User',
+            },
+          ],
+        });
+      return mapProjects(projects);
     } catch (e) {
-      console.log('errors: ', e)
+      console.error('errors: ', e);
+      return Promise.reject(new Error(e));
+    }
+  },
+  getProject: async (parent, variables) => {
+    console.log('variables: ', variables);
+    const { id } = variables;
+    try {
+      const project = await Project.findById({ _id: id })
+        .lean()
+        .populate({
+          path: 'owner',
+          model: 'User',
+        })
+        .populate({
+          path: 'members',
+          model: 'User',
+        })
+        .populate({
+          path: 'tasks',
+          model: 'Task',
+          populate: [
+            {
+              path: 'reporter',
+              model: 'User',
+            },
+            {
+              path: 'assignTo',
+              model: 'User',
+            },
+          ],
+        });
+      return mapProject(project);
+    } catch (e) {
+      console.error('errors: ', e);
+      return Promise.reject(new Error(e));
+    }
+  },
+  tasks: async () => {
+    try {
+      const tasks = await Task.find({})
+        .lean()
+        .populate('reporter')
+        .populate('assignTo');
+      return mapTasks(tasks);
+    } catch (e) {
+      console.error('errors: ', e);
+      return Promise.reject(new Error(e));
+    }
+  },
+  getTask: async (parent, variables) => {
+    console.log('variables: ', variables);
+    const { id } = variables;
+    try {
+      const task = await Task.findById({ _id: id })
+        .lean()
+        .populate('reporter')
+        .populate('assignTo');
+      return mapTask(task);
+    } catch (e) {
+      console.error(e);
       return Promise.reject(new Error(e));
     }
   }
