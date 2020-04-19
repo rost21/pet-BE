@@ -1,0 +1,74 @@
+[
+  {
+    "id": 1,
+    "title": "Project 1",
+    "description": "Test project 1",
+    "owner": {
+      "id": 1,
+      "firstname": "user",
+      "lastname": "test",
+      "username": "customer1",
+      "email": "test1@mail.com",
+      "password": null,
+      "phone": null,
+      "dateOfBirth": null,
+      "role": "customer",
+      "isCustomer": true,
+      "skills": null,
+      "rankings": null
+    },
+    "status": "NOT PAID",
+    "members": [],
+    "tasks": [],
+    "startDate": null,
+    "endDate": null
+  },
+  {
+    "id": 2,
+    "title": "Project 2",
+    "description": "Test project 2",
+    "owner": {
+      "id": 2,
+      "firstname": "user",
+      "lastname": "test",
+      "username": "customer2",
+      "email": "test@mail.com",
+      "password": null,
+      "phone": null,
+      "dateOfBirth": null,
+      "role": "customer",
+      "isCustomer": true,
+      "skills": null,
+      "rankings": null
+    },
+    "status": "NOT PAID",
+    "members": [],
+    "tasks": [],
+    "startDate": null,
+    "endDate": null
+  },
+  {
+    "id": 3,
+    "title": "Project 3",
+    "description": "Test project 3",
+    "owner": {
+      "id": 2,
+      "firstname": "user",
+      "lastname": "test",
+      "username": "customer2",
+      "email": "test@mail.com",
+      "password": null,
+      "phone": null,
+      "dateOfBirth": null,
+      "role": "customer",
+      "isCustomer": true,
+      "skills": null,
+      "rankings": null
+    },
+    "status": "NOT PAID",
+    "members": [],
+    "tasks": [],
+    "startDate": null,
+    "endDate": null
+  }
+]
