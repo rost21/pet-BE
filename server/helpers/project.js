@@ -6,7 +6,7 @@ const mapProject = project => {
   return {
     id: project._id,
     title: project.title,
-    shortDescription: project.shortDescription,
+    description: project.description,
     owner: mapUser(project.owner),
     status: project.status,
     members: mapUsers(project.members),

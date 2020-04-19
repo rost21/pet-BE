@@ -15,11 +15,12 @@ const typeDefs = gql`
     email: String
     password: String
     phone: String
-    dateOfBirth: Int
+    dateOfBirth: String
     role: String
     isCustomer: Boolean
-    skills: String
+    skills: [String]
     rankings: Float
+    about: String
   },
   input RegisterPayload {
     username: String!
@@ -38,11 +39,12 @@ const typeDefs = gql`
     email: String
     password: String
     phone: String
-    dateOfBirth: Int
+    dateOfBirth: String
     role: String
     isCustomer: Boolean
-    skills: String
+    skills: [String]
     rankings: Float
+    about: String
   },
   input LoginPayload {
     username: String!
@@ -50,9 +52,6 @@ const typeDefs = gql`
   },
   type LoginResponse {
     isLoggedIn: Boolean
-    id: ID
-    username: String
-    email: String
     token: String
   },
   type UpdateUserResponse {
@@ -63,22 +62,22 @@ const typeDefs = gql`
   type Project {
     id: ID
     title: String
-    shortDescription: String
+    description: String
     owner: User
     status: String
     members: [User]
     tasks: [Task]
-    startDate: Int
-    endDate: Int
+    startDate: String
+    endDate: String
   },
   input ProjectPayload {
     title: String!
-    shortDescription: String
+    description: String
     owner: ID!
     status: String
     members: [ID]
-    startDate: Int
-    endDate: Int
+    startDate: String
+    endDate: String
   },
   type CreateProjectResponse {
     project: Project
@@ -86,17 +85,22 @@ const typeDefs = gql`
   },
   input UpdateProjectPayload {
     title: String
-    shortDescription: String
+    description: String
     owner: ID
     status: String
     members: [ID]
     tasks: [ID]
-    startDate: Int
-    endDate: Int
+    startDate: String
+    endDate: String
   },
   type UpdateProjectResponse {
     project: Project
     isUpdated: Boolean
+  },
+  input Filter {
+    title: String
+    status: String
+    member: ID
   }
   # ===== Task ===== #
   type Task {
@@ -129,7 +133,8 @@ const typeDefs = gql`
     users: [User]
     login(data: LoginPayload!): LoginResponse
     getUser(token: String!): User
-    projects: [Project]
+    projects (filter: Filter): [Project]
+    # getProjectsByFilter(filter: Filter): [Project]
     getProject(id: ID!): Project
     tasks: [Task]
     getTask(id: ID!): Task

@@ -23,11 +23,12 @@ const userSchema = Schema({
   },
   password: { type: String, required: true },
   phone: String,
-  dateOfBirth: Number,
+  dateOfBirth: String,
   role: String,
   isCustomer: { type: Boolean, required: true },
-  skills: String,
+  skills: [{ type: String }],
   rankings: Number,
+  about: String,
 });
 
 userSchema.plugin(uniqueValidator, {

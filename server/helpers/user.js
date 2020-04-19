@@ -12,7 +12,8 @@ const mapUser = user => {
     role: user.role,
     isCustomer: user.isCustomer,
     skills: user.skills,
-    rankings: user.rankings
+    rankings: user.rankings,
+    about: user.about,
   };
 };
 

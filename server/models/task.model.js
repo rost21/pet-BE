@@ -9,7 +9,7 @@ const taskSchema = Schema({
   id: Schema.Types.ObjectId,
   title: { type: String, required: true },
   description: { type: String, required: true },
-  type: { type: String, enum: ['bug', 'story', 'improvment'] },
+  type: { type: String, enum: ['bug', 'story', 'improvement'] },
   reporter: {
     type: Schema.Types.ObjectId,
     ref: 'User',

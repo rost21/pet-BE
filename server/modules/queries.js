@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 const User = require('../models/user.model');
 const Project = require('../models/project.model');
 const Task = require('../models/task.model');
@@ -30,7 +31,7 @@ const queries = {
         const { _id, username, email } = user;
         const token = jwt.sign(
           {
-            id: user._id,
+            id: _id,
             username,
             email
           },
@@ -39,9 +40,6 @@ const queries = {
         );
         return {
           isLoggedIn: true,
-          id: _id,
-          username,
-          email,
           token
         };
       }
@@ -66,8 +64,27 @@ const queries = {
       return Promise.reject(new Error(e));
     }
   },
-  projects: async () => {
+  projects: async (parent, { filter }) => {
     try {
+      // const { title, member } = filter;
+      // const projectFilter = { ...filter };
+
+      // console.log('Object.keys(filter): ', Object.keys(filter));
+      // const proj = Object.keys(filter).reduce((acc, item) => {
+      //   if (!!filter[item]) {
+      //     console.log('item: ', item);
+      //     console.log('item: ', filter[item]);
+      //     if (item === 'member') {
+      //       return { ...acc, member: mongoose.Types.ObjectId(filter[item]) };
+      //     }
+      //     if (item === 'title') {
+      //       return { ...acc, title: { $regex: filter[item] } };
+      //     }
+      //     return { ...acc, [item]: filter[item] };
+      //   }
+      //   return { ...acc };
+      // }, {});
+
       const projects = await Project.find({})
         .lean()
         .populate({
@@ -93,6 +110,7 @@ const queries = {
           ],
         });
       return mapProjects(projects);
+      // return await require('../mocks/projects.json');
     } catch (e) {
       console.error('errors: ', e);
       return Promise.reject(new Error(e));

@@ -8,7 +8,7 @@ const uniqueValidator = require('mongoose-unique-validator');
 const projectSchema = Schema({
   id: Schema.Types.ObjectId,
   title: { type: String, required: true },
-  shortDescription: String,
+  description: String,
   owner: {
     type: Schema.Types.ObjectId,
     required: true,
@@ -21,8 +21,8 @@ const projectSchema = Schema({
   },
   members: [{ type: Schema.Types.ObjectId, ref: 'User' }],
   tasks: [{ type: Schema.Types.ObjectId, ref: 'Task' }],
-  startDate: { type: Number, default: new Date().getTime() },
-  endDate: Number
+  startDate: { type: String, default: new Date().getTime() },
+  endDate: String,
 });
 
 projectSchema.plugin(uniqueValidator, {
