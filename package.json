@@ -1,7 +1,7 @@
 {
   "name": "server-backend",
   "version": "1.0.0",
-  "description": "Node js server for the disploma work of me",
+  "description": "Node js server for the diploma work of me",
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
