@@ -1,7 +1,6 @@
 {
   "env": {
     "MONGO_PASSWORD": "root",
-    "JWT_KEY": "secretkey",
-    "PORT": 8001
+    "JWT_KEY": "secretkey"
   }
 }
