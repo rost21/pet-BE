@@ -1,7 +1,6 @@
 const express = require('express');
 const { ApolloServer } = require('apollo-server-express');
 const cors = require("cors");
-// const morgan = require("morgan");
 
 // #2 Import mongoose
 const mongoose = require('./server/config/database');
@@ -26,7 +25,7 @@ app.use(express.json());
 server.applyMiddleware({ app });
 
 // #8 Set the port that the Express application will listen to
-const port = 8001;
-app.listen({ port: 8001 }, () => {
+const port = process.env.PORT || 8001;
+app.listen({ port }, () => {
   console.log(`Server running on http://localhost:${port}${server.graphqlPath}`);
 });
