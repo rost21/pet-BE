@@ -110,7 +110,6 @@ const queries = {
           ],
         });
       return mapProjects(projects);
-      // return await require('../mocks/projects.json');
     } catch (e) {
       console.error('errors: ', e);
       return Promise.reject(new Error(e));
