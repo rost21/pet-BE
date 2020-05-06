@@ -1,5 +1,5 @@
 // #1 Import the constructor Schema and the model() method
-// Note the use of ES6 desctructuring
+// Note the use of ES6 destructuring
 const { Schema, model }  = require('mongoose');
 
 // #2 Instantiate a schema using mongoose Schema

@@ -4,15 +4,16 @@ const { mapTasks } = require('./task');
 const mapProject = project => {
   if (!project) return null;
   return {
+    ...project,
     id: project._id,
-    title: project.title,
-    description: project.description,
+    // title: project.title,
+    // description: project.description,
     owner: mapUser(project.owner),
-    status: project.status,
+    // status: project.status,
     members: mapUsers(project.members),
     tasks: mapTasks(project.tasks),
-    startDate: project.startDate,
-    endDate: project.endDate
+    // startDate: project.startDate,
+    // endDate: project.endDate
   };
 };
 

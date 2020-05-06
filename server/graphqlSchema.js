@@ -26,11 +26,18 @@ const typeDefs = gql`
     username: String!
     email: String!
     password: String!
+    firstname: String!
+    lastname: String!
     isCustomer: Boolean!
+    dateOfBirth: String
+    phone: String
+    skills: [String]
+    role: String
+    about: String
   },
   type RegisterResponse {
-    user: User
-    isCreated: Boolean
+    message: String
+    isCreated: Boolean!
   },
   input UpdateUserPayload {
     firstname: String
