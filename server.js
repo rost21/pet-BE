@@ -13,7 +13,16 @@ const resolvers = require('./server/modules/resolvers');
 // #5 Initialize an Apollo server
 const server = new ApolloServer({
   typeDefs: [typeDefs],
-  resolvers
+  resolvers,
+  context: ({ req }) => {
+    try {
+      const tokenWithBearer = req.headers.authorization || '';
+      const token = tokenWithBearer.split(' ')[1];
+      return { token };
+    } catch (e) {
+      throw new Error(e);
+    }
+  }
 });
 
 // #6 Initialize an Express application

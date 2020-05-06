@@ -3,13 +3,14 @@ const { mapUser } = require('./user');
 const mapTask = task => {
   if (!task) return null;
   return {
+    ...task,
     id: task._id,
-    title: task.title,
-    description: task.description,
-    type: task.type,
+    // title: task.title,
+    // description: task.description,
+    // type: task.type,
     reporter: mapUser(task.reporter),
     assignTo: mapUser(task.assignTo),
-    status: task.status
+    // status: task.status
   };
 };
 
