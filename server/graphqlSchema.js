@@ -79,7 +79,7 @@ const typeDefs = gql`
   },
   input ProjectPayload {
     title: String!
-    description: String
+    description: String!
     owner: ID!
     status: String
     members: [ID]

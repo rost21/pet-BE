@@ -19,7 +19,7 @@ const taskSchema = Schema({
     type: Schema.Types.ObjectId,
     ref: 'User'
   },
-  status: String,
+  status: { type: String, enum: ['ready', 'wip', 'done', 'closed'] },
 });
 
 taskSchema.plugin(uniqueValidator, {

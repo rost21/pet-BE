@@ -88,12 +88,36 @@ const mutations = {
     console.log('variables: ', JSON.parse(JSON.stringify(data)));
     try {
       jwt.verify(token, process.env.JWT_KEY);
+      const id = new mongoose.Types.ObjectId()
       const newProject = new Project({
-        _id: new mongoose.Types.ObjectId(),
+        _id: id,
         ...data
       });
-      const res = await newProject.save();
-      const populated = await res.populate('owner').populate('members').populate('tasks').execPopulate();
+      await newProject.save();
+      const populated = await Project.findById({ _id: id })
+        .lean()
+        .populate({
+          path: 'owner',
+          model: 'User',
+        })
+        .populate({
+          path: 'members',
+          model: 'User',
+        })
+        .populate({
+          path: 'tasks',
+          model: 'Task',
+          populate: [
+            {
+              path: 'reporter',
+              model: 'User',
+            },
+            {
+              path: 'assignTo',
+              model: 'User',
+            },
+          ],
+        });
       return { project: mapProject(populated), isCreated: true };
     } catch (e) {
       console.log('errors: ', e);
@@ -108,7 +132,7 @@ const mutations = {
     const { id, data } = variables;
     try {
       jwt.verify(token, process.env.JWT_KEY);
-      const updatedProject = await Project.findByIdAndUpdate({ _id: id}, data, { new: true })
+      const updatedProject = await Project.findByIdAndUpdate({ _id: id }, data, { new: true })
         .lean()
         .populate({
           path: 'owner',

@@ -8,7 +8,7 @@ const uniqueValidator = require('mongoose-unique-validator');
 const projectSchema = Schema({
   id: Schema.Types.ObjectId,
   title: { type: String, required: true },
-  description: String,
+  description: { type: String, required: true },
   owner: {
     type: Schema.Types.ObjectId,
     required: true,
