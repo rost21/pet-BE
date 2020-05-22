@@ -1,4 +1,5 @@
 const { mapUser } = require('./user');
+const { mapComments } = require('./comment');
 
 const mapTask = task => {
   if (!task) return null;
@@ -10,6 +11,7 @@ const mapTask = task => {
     // type: task.type,
     reporter: mapUser(task.reporter),
     assignTo: mapUser(task.assignTo),
+    comments: mapComments(task.comments || []),
     // status: task.status
   };
 };

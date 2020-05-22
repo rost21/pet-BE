@@ -1,11 +1,13 @@
 const User = require('../models/user.model');
 const Project = require('../models/project.model');
 const Task = require('../models/task.model');
+const Comment = require('../models/comment.model');
 const bcrypt = require('bcrypt');
 const mongoose = require('mongoose');
 const { mapUser } = require('../helpers/user');
 const { mapProject } = require('../helpers/project');
 const { mapTask } = require('../helpers/task');
+const { mapComment } = require('../helpers/comment');
 const jwt = require('jsonwebtoken');
 const { AuthenticationError } = require("apollo-server-express");
 
@@ -154,6 +156,14 @@ const mutations = {
               path: 'assignTo',
               model: 'User',
             },
+            {
+              path: 'comments',
+              model: 'Comment',
+              populate: {
+                path: 'author',
+                model: 'User'
+              }
+            },
           ],
         });
       return { project: mapProject(updatedProject), isUpdated: true };      
@@ -184,16 +194,21 @@ const mutations = {
     const { projectId, data } = variables;
     try {
       jwt.verify(token, process.env.JWT_KEY);
+      const id = new mongoose.Types.ObjectId();
       const newTask = new Task({
-        _id: new mongoose.Types.ObjectId(),
+        _id: id,
         ...data
       });
-      const { tasks } = await Project.findById({ _id: projectId }).lean();
+      const { tasks = [] } = await Project.findById({ _id: projectId }).lean();
       tasks.push(newTask._id);
-      const res = await newTask.save();
+      
+      await newTask.save();
 
       await Project.findByIdAndUpdate({ _id: projectId }, { tasks }, { new: true });
-      const populated = await res.populate('reporter').populate('assignTo').execPopulate();
+      const populated = await Task.findById({ _id: id })
+        .lean()
+        .populate('reporter')
+        .populate('assignTo');
       return { task: mapTask(populated), isCreated: true };
     } catch (e) {
       console.error(e);
@@ -208,10 +223,19 @@ const mutations = {
     const { id, data } = variables;
     try {
       jwt.verify(token, process.env.JWT_KEY);
-      const updatedTask = await Task.findByIdAndUpdate({ _id: id}, data, { new: true })
+      const updatedTask = await Task.findByIdAndUpdate({ _id: id }, data, { new: true })
         .lean()
         .populate('reporter')
-        .populate('assignTo');
+        .populate('assignTo')
+        .populate('comments')
+        .populate({
+          path: 'comments',
+          model: 'Comment',
+          populate: {
+            path: 'author',
+            model: 'User'
+          }
+        });
       return { task: mapTask(updatedTask), isUpdated: true };
     } catch (e) {
       console.error(e);
@@ -234,7 +258,34 @@ const mutations = {
       }
       return Promise.reject(new Error(e));
     }
-  }
+  },
+  createComment: async (parent, variables, { token }) => {
+    console.log('variables: ', JSON.parse(JSON.stringify(variables)));
+    const { taskId, data } = variables;
+    try {
+      jwt.verify(token, process.env.JWT_KEY);
+      const id = new mongoose.Types.ObjectId();
+      const newComment = new Comment({
+        _id: id,
+        ...data
+      });
+      const { comments = [] } = await Task.findById({ _id: taskId }).lean();
+
+      comments.push(newComment._id);
+
+      await newComment.save();
+
+      await Task.findByIdAndUpdate({ _id: taskId }, { comments }, { new: true });
+      const populated = await Comment.findById({ _id: id }).lean().populate('author');
+      return { comment: mapComment(populated), isCreated: true };
+    } catch (e) {
+      console.error(e);
+      if (e.name === 'TokenExpiredError') {
+        return Promise.reject(new AuthenticationError('Token expired'));
+      }
+      return Promise.reject(new Error(e));
+    }
+  },
 };
 
 module.exports = mutations;

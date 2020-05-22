@@ -1,12 +1,11 @@
 // #1 Import the constructor Schema and the model() method
-// Note the use of ES6 desctructuring
+// Note the use of ES6 destructuring
 const { Schema, model } = require('mongoose');
 
 // #2 Instantiate a schema using mongoose Schema
 const uniqueValidator = require('mongoose-unique-validator');
 
 const projectSchema = Schema({
-  id: Schema.Types.ObjectId,
   title: { type: String, required: true },
   description: { type: String, required: true },
   owner: {

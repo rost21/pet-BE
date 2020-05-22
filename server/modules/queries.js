@@ -2,6 +2,7 @@ const { AuthenticationError } = require("apollo-server-express");
 const User = require('../models/user.model');
 const Project = require('../models/project.model');
 const Task = require('../models/task.model');
+const Comment = require('../models/comment.model');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { mapUsers, mapUser } = require('../helpers/user');
@@ -116,6 +117,14 @@ const queries = {
               path: 'assignTo',
               model: 'User',
             },
+            {
+              path: 'comments',
+              model: 'Comment',
+              populate: {
+                path: 'author',
+                model: 'User'
+              }
+            },
           ],
         });
       return mapProjects(projects);
@@ -154,6 +163,14 @@ const queries = {
               path: 'assignTo',
               model: 'User',
             },
+            {
+              path: 'comments',
+              model: 'Comment',
+              populate: {
+                path: 'author',
+                model: 'User'
+              }
+            },
           ],
         });
       return mapProject(project);
@@ -165,22 +182,24 @@ const queries = {
       return Promise.reject(new Error(e));
     }
   },
-  tasks: async (parent, _, { token }) => {
-    try {
-      jwt.verify(token, process.env.JWT_KEY);
-      const tasks = await Task.find({})
-        .lean()
-        .populate('reporter')
-        .populate('assignTo');
-      return mapTasks(tasks);
-    } catch (e) {
-      console.error('errors: ', e);
-      if (e.name === 'TokenExpiredError') {
-        return Promise.reject(new AuthenticationError('Token expired'));
-      }
-      return Promise.reject(new Error(e));
-    }
-  },
+  // tasks: async (parent, _, { token }) => {
+  //   try {
+  //     jwt.verify(token, process.env.JWT_KEY);
+  //     const tasks = await Task.find({})
+  //       .lean()
+  //       .populate('reporter')
+  //       .populate('assignTo')
+  //       .populate('comments')
+  //       .populate('author');
+  //     return mapTasks(tasks);
+  //   } catch (e) {
+  //     console.error('errors: ', e);
+  //     if (e.name === 'TokenExpiredError') {
+  //       return Promise.reject(new AuthenticationError('Token expired'));
+  //     }
+  //     return Promise.reject(new Error(e));
+  //   }
+  // },
   getTask: async (parent, variables, { token }) => {
     console.log('variables: ', variables);
     const { id } = variables;
@@ -189,7 +208,15 @@ const queries = {
       const task = await Task.findById({ _id: id })
         .lean()
         .populate('reporter')
-        .populate('assignTo');
+        .populate('assignTo')
+        .populate({
+          path: 'comments',
+          model: 'Comment',
+          populate: {
+            path: 'author',
+            model: 'User'
+          }
+        });
       return mapTask(task);
     } catch (e) {
       console.error(e);

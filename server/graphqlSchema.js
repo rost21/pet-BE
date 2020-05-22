@@ -77,7 +77,7 @@ const typeDefs = gql`
     startDate: String
     endDate: String
   },
-  input ProjectPayload {
+  input CreateProjectPayload {
     title: String!
     description: String!
     owner: ID!
@@ -93,7 +93,6 @@ const typeDefs = gql`
   input UpdateProjectPayload {
     title: String
     description: String
-    owner: ID
     status: String
     members: [ID]
     tasks: [ID]
@@ -108,7 +107,7 @@ const typeDefs = gql`
     title: String
     status: String
     member: ID
-  }
+  },
   # ===== Task ===== #
   type Task {
     id: ID
@@ -118,6 +117,9 @@ const typeDefs = gql`
     reporter: User
     assignTo: User
     status: String
+    creationDate: String
+    closedDate: String
+    comments: [Comment]
   },
   input CreateOrUpdateTaskPayload {
     title: String
@@ -126,6 +128,7 @@ const typeDefs = gql`
     reporter: ID
     assignTo: ID
     status: String
+    creationDate: String
   },
   type CreateTaskResponse {
     task: Task
@@ -134,6 +137,22 @@ const typeDefs = gql`
   type UpdateTaskResponse {
     task: Task
     isUpdated: Boolean
+  },
+  # ===== Task ===== #
+  type Comment {
+    id: ID
+    comment: String
+    author: User
+    postedDate: String
+  },
+  input CreateCommentPayload {
+    comment: String
+    author: ID
+    postedDate: String
+  },
+  type CreateCommentResponse {
+    comment: Comment
+    isCreated: Boolean,
   }
   #4 Define the query type that must respond to 'posts' query
   type Query {
@@ -151,12 +170,13 @@ const typeDefs = gql`
     register(data: RegisterPayload!): RegisterResponse
     updateUser(id: ID!, data: UpdateUserPayload!): UpdateUserResponse
     deleteUser(id: ID!): Boolean
-    createProject(data: ProjectPayload!): CreateProjectResponse
+    createProject(data: CreateProjectPayload!): CreateProjectResponse
     updateProject(id: ID!, data: UpdateProjectPayload!): UpdateProjectResponse
     deleteProject(id: ID!): Boolean
     createTask(projectId: ID!, data: CreateOrUpdateTaskPayload!): CreateTaskResponse
     updateTask(id: ID!, data: CreateOrUpdateTaskPayload!): UpdateTaskResponse
     deleteTask(id: ID!): Boolean
+    createComment(taskId: ID!, data: CreateCommentPayload!): CreateCommentResponse
   },
 `;
 
