@@ -21,8 +21,10 @@ const userSchema = Schema({
     uniqueCaseInsensitive: true
   },
   password: { type: String, required: true },
+  gender: { type: String, required: true, enum: ['male', 'female'] },
   phone: String,
   dateOfBirth: String,
+  location: String,
   role: String,
   isCustomer: { type: Boolean, required: true },
   skills: [{ type: String }],

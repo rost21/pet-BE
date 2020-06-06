@@ -14,8 +14,10 @@ const typeDefs = gql`
     username: String
     email: String
     password: String
+    gender: String
     phone: String
     dateOfBirth: String
+    location: String
     role: String
     isCustomer: Boolean
     skills: [String]
@@ -29,8 +31,10 @@ const typeDefs = gql`
     firstname: String!
     lastname: String!
     isCustomer: Boolean!
+    gender: String!
     dateOfBirth: String
     phone: String
+    location: String
     skills: [String]
     role: String
     about: String
@@ -45,8 +49,10 @@ const typeDefs = gql`
     username: String
     email: String
     password: String
+    gender: String
     phone: String
     dateOfBirth: String
+    location: String
     role: String
     isCustomer: Boolean
     skills: [String]
