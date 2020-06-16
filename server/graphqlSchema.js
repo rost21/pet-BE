@@ -110,9 +110,8 @@ const typeDefs = gql`
     isUpdated: Boolean
   },
   input Filter {
-    title: String
     status: String
-    member: ID
+    search: String
   },
   # ===== Task ===== #
   type Task {
@@ -165,8 +164,7 @@ const typeDefs = gql`
     users: [User]
     login(data: LoginPayload!): LoginResponse
     getUser(token: String!): User
-    projects (filter: Filter): [Project]
-    # getProjectsByFilter(filter: Filter): [Project]
+    projects(filter: Filter): [Project]
     getProject(id: ID!): Project
     tasks: [Task]
     getTask(id: ID!): Task

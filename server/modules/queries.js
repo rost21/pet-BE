@@ -26,8 +26,8 @@ const queries = {
   },
   login: async (parent, { data }) => {
     console.log('variables: ', JSON.parse(JSON.stringify(data)));
-    const { username, password } = data;
     try {
+      const { username, password } = data;
       const user = await User.findOne({ username }).lean();
       if (!user) {
         return { isLoggedIn: false };
@@ -53,8 +53,8 @@ const queries = {
   },
   getUser: async (parent, variables) => {
     console.log('variables: ', JSON.parse(JSON.stringify(variables)));
-    const { token } = variables;
     try {
+      const { token } = variables;
       const decoded = jwt.verify(token, process.env.JWT_KEY);
       if (decoded) {
         const { _id } = decoded;
@@ -71,31 +71,13 @@ const queries = {
       return Promise.reject(new Error(e));
     }
   },
-  projects: async (parent, { filter }, { token }) => {
-    // const decoded = jwt.verify(token, process.env.JWT_KEY);
-    // console.log('decoded: ', decoded);
-    // if (!decoded) throw new AuthenticationError("You are not authorized");
+  projects: async (parent, variables, { token }) => {
+    console.log('variables: ', JSON.parse(JSON.stringify(variables)));
     try {
-      // const { title, member } = filter;
-      // const projectFilter = { ...filter };
-
-      // console.log('Object.keys(filter): ', Object.keys(filter));
-      // const proj = Object.keys(filter).reduce((acc, item) => {
-      //   if (!!filter[item]) {
-      //     console.log('item: ', item);
-      //     console.log('item: ', filter[item]);
-      //     if (item === 'member') {
-      //       return { ...acc, member: mongoose.Types.ObjectId(filter[item]) };
-      //     }
-      //     if (item === 'title') {
-      //       return { ...acc, title: { $regex: filter[item] } };
-      //     }
-      //     return { ...acc, [item]: filter[item] };
-      //   }
-      //   return { ...acc };
-      // }, {});
-      jwt.verify(token, process.env.JWT_KEY);
-      const projects = await Project.find({})
+      const { filter: { status, search } } = variables;
+      const decoded = jwt.verify(token, process.env.JWT_KEY);
+      const { _id } = decoded;
+      const projects = await Project.find({ title: new RegExp(search, 'i') })
         .lean()
         .populate({
           path: 'owner',
@@ -127,7 +109,22 @@ const queries = {
             },
           ],
         });
-      return mapProjects(projects);
+      const mappedProjects = mapProjects(projects);
+      let result = [];
+      switch (status) {
+        case 'active':
+          result = mappedProjects.filter(project => project.status !== 'CLOSED');
+          break;
+        case 'all':
+          result = mappedProjects;
+          break;
+        case 'my':
+          result = mappedProjects.filter(project => project.members.some(item => item.id.toString() === _id.toString()) || project.owner.id.toString() === _id.toString());
+          break;
+        default:
+          break;
+      }
+      return result;
     } catch (e) {
       console.error('errors: ', e);
       if (e.name === 'TokenExpiredError') {
@@ -138,8 +135,8 @@ const queries = {
   },
   getProject: async (parent, variables, { token }) => {
     console.log('variables: ', variables);
-    const { id } = variables;
     try {
+      const { id } = variables;
       jwt.verify(token, process.env.JWT_KEY);
       const project = await Project.findById({ _id: id })
         .lean()
@@ -202,8 +199,8 @@ const queries = {
   // },
   getTask: async (parent, variables, { token }) => {
     console.log('variables: ', variables);
-    const { id } = variables;
     try {
+      const { id } = variables;
       jwt.verify(token, process.env.JWT_KEY);
       const task = await Task.findById({ _id: id })
         .lean()
