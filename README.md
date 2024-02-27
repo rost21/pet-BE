@@ -1,4 +1,4 @@
-# Server for the diplom BE app
+# Server for the pet application
 
 ## Prerequisities
 
